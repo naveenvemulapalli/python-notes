@@ -1,0 +1,87 @@
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+from datetime import datetime
+
+# Directory containing CSV files
+DATA_DIR = "./data"   # change if needed
+OUTPUT_DIR = "./output"
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Date range
+dates = [
+    "9Mar", "10Mar", "11Mar", "12Mar", "13Mar",
+    "14Mar", "15Mar", "16Mar", "17Mar", "18Mar", "19Mar"
+]
+
+daily_totals = []
+
+for d in dates:
+    file_a = os.path.join(DATA_DIR, f"prod_products_regiona_{d}.csv")
+    file_b = os.path.join(DATA_DIR, f"prod_products_regionb_{d}.csv")
+
+    if not (os.path.exists(file_a) and os.path.exists(file_b)):
+        print(f"Skipping {d}, file missing")
+        continue
+
+    # Read CSVs
+    df_a = pd.read_csv(file_a)
+    df_b = pd.read_csv(file_b)
+
+    # Rename columns to avoid collision
+    df_a.rename(columns={"count": "count_a"}, inplace=True)
+    df_b.rename(columns={"count": "count_b"}, inplace=True)
+
+    # Merge on product (outer join handles missing products)
+    merged = pd.merge(df_a, df_b, on="product", how="outer")
+
+    # Replace NaN with 0
+    merged.fillna(0, inplace=True)
+
+    # Convert to integer (after fillna)
+    merged["count_a"] = merged["count_a"].astype(int)
+    merged["count_b"] = merged["count_b"].astype(int)
+
+    # Total count
+    merged["total_count"] = merged["count_a"] + merged["count_b"]
+
+    # Save per-day CSV
+    output_file = os.path.join(OUTPUT_DIR, f"combined_{d}.csv")
+    merged.to_csv(output_file, index=False)
+
+    print(f"Generated: {output_file}")
+
+    # Daily total (sum of all products)
+    total = merged["total_count"].sum()
+    daily_totals.append((d, total))
+
+# -------------------------------
+# 📊 Generate graph
+# -------------------------------
+
+# Convert to DataFrame
+df_totals = pd.DataFrame(daily_totals, columns=["date", "total"])
+
+# Sort by date (important!)
+df_totals["date_dt"] = df_totals["date"].apply(
+    lambda x: datetime.strptime(x, "%d%b")
+)
+df_totals.sort_values("date_dt", inplace=True)
+
+# Plot
+plt.figure(figsize=(10, 5))
+plt.plot(df_totals["date"], df_totals["total"], marker='o')
+
+plt.title("Total Product Count per Day")
+plt.xlabel("Date")
+plt.ylabel("Total Count")
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+
+graph_file = os.path.join(OUTPUT_DIR, "daily_totals.png")
+plt.savefig(graph_file)
+plt.show()
+
+print(f"Graph saved to: {graph_file}")
