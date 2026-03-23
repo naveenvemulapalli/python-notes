@@ -1,51 +1,30 @@
-phase 0 - foundation - Establish baseline diff automation
-XML → canonical JSON normalization
-Structured diff generation (DeepDiff)
-Basic change report (added/removed/modified offers)
-
-phase 1 - Introduce LLM-based interpretation
-Parse CR document (Word)
-Send:
-diff JSON
-CR text
-→ to LLM
-Generate:
-summary
-expected vs unexpected changes
-
-Phase 2 — LangGraph Agent (Core Agentic System) - Move from pipelineto agent workflow
-reasoning flow
-structured prompts
-deterministic execution
-
-Phase 3 - Improve reliability & governance
-Add self-critic node
-Add rule-based validation layer
-Add risk scoring
-
-Phase 4 - Memory - Enable cross-release intelligence
-Store audit reports in:
-Amazon OpenSearch Service
-Add similarity search:
-“compare with last release”
-“similar past risks”
-
-Phase 5 - Conversational AI assistant - make system interactive
-
-Phase 6 - AWS production deployment
-S3 (input/output)
-EventBridge trigger
-Lambda (lightweight)
-AWS Fargate (agent execution)
-Amazon Bedrock
-OpenSearch (memory)
-CloudWatch (monitoring)
-
-Phase 7 — Advanced Intelligence (Optional, High Value) - Move toward autonomous governance
-Multi-agent system (pricing, offers, dependencies)
-Release risk prediction
-Automated approval suggestions
-CI/CD integration (block risky releases)
-Drift anomaly detection
-
-
+1. VPC (Networking Foundation)
+Create a Amazon VPC with public and private subnets across 2 AZs.
+Configure route tables, internet gateway, and (optionally) NAT gateway for private subnet outbound access.
+2. ALB (UI Entry Point)
+Create an internet-facing Application Load Balancer in public subnets.
+Configure target group and listener rules to route traffic to the Gradio ECS service.
+3. API Gateway (Secure API Layer)
+Create REST APIs in Amazon API Gateway for /jobs, /status, /result, /approve.
+Enable API keys, usage plan, and integrate endpoints with Lambda functions.
+4. ECS Fargate (UI + Worker Services)
+Create ECS cluster and deploy two services using Amazon ECS (Gradio UI service + LangGraph worker task).
+Store container images in ECR and configure task definitions with IAM roles, environment variables, and logging.
+5. Lambda (Orchestration Layer)
+Create AWS Lambda functions to handle job creation, status retrieval, and HITL approval actions.
+Configure Lambda to trigger ECS tasks and interact with RDS and S3.
+6. S3 (Input/Output Storage)
+Create Amazon S3 buckets for input (XML, CR docs) and output (reports).
+Use pre-signed URLs for secure upload/download and enforce bucket policies (no public access).
+7. RDS PostgreSQL (State & Metadata)
+Deploy Amazon RDS (PostgreSQL) in private subnets.
+Create schema for jobs, status, and LangGraph checkpoints; allow access only from ECS and Lambda via security groups.
+8. Bedrock (LLM Integration)
+Enable Amazon Bedrock and request access to Claude models.
+Configure IAM permissions for ECS tasks to invoke Bedrock APIs.
+9. SNS (HITL Notifications)
+Create topic in Amazon SNS and subscribe email endpoints.
+Publish messages from ECS worker when HITL checkpoints occur, including approval links.
+10. CloudWatch (Monitoring & Logs)
+Enable logging for ECS, Lambda, and API Gateway using Amazon CloudWatch.
+Set up log groups, basic alarms (errors/throttles), and dashboards for observability.
