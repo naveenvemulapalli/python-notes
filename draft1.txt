@@ -1,0 +1,51 @@
+phase 0 - foundation - Establish baseline diff automation
+XML → canonical JSON normalization
+Structured diff generation (DeepDiff)
+Basic change report (added/removed/modified offers)
+
+phase 1 - Introduce LLM-based interpretation
+Parse CR document (Word)
+Send:
+diff JSON
+CR text
+→ to LLM
+Generate:
+summary
+expected vs unexpected changes
+
+Phase 2 — LangGraph Agent (Core Agentic System) - Move from pipelineto agent workflow
+reasoning flow
+structured prompts
+deterministic execution
+
+Phase 3 - Improve reliability & governance
+Add self-critic node
+Add rule-based validation layer
+Add risk scoring
+
+Phase 4 - Memory - Enable cross-release intelligence
+Store audit reports in:
+Amazon OpenSearch Service
+Add similarity search:
+“compare with last release”
+“similar past risks”
+
+Phase 5 - Conversational AI assistant - make system interactive
+
+Phase 6 - AWS production deployment
+S3 (input/output)
+EventBridge trigger
+Lambda (lightweight)
+AWS Fargate (agent execution)
+Amazon Bedrock
+OpenSearch (memory)
+CloudWatch (monitoring)
+
+Phase 7 — Advanced Intelligence (Optional, High Value) - Move toward autonomous governance
+Multi-agent system (pricing, offers, dependencies)
+Release risk prediction
+Automated approval suggestions
+CI/CD integration (block risky releases)
+Drift anomaly detection
+
+
