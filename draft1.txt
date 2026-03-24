@@ -28,3 +28,9 @@ Publish messages from ECS worker when HITL checkpoints occur, including approval
 10. CloudWatch (Monitoring & Logs)
 Enable logging for ECS, Lambda, and API Gateway using Amazon CloudWatch.
 Set up log groups, basic alarms (errors/throttles), and dashboards for observability.
+11. ECR (Container Registry for ECS)
+Create repositories in Amazon Elastic Container Registry for both Gradio UI and LangGraph worker images, and push Docker images using CI/CD or CLI.
+Grant ECS task execution roles permission to pull images from ECR and enable image scanning for basic security.
+12. OpenSearch (Cross-Release Intelligence + Chat)
+Create a domain in Amazon OpenSearch Service with vector search enabled, and define indices for audit data (changes, risks, summaries, embeddings).
+Integrate ECS worker to index audit outputs (diff, risk, report summary) into OpenSearch during execution, and later query it from Gradio chat for cross-release insights.
